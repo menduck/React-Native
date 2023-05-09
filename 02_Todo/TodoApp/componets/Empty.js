@@ -6,7 +6,6 @@ function Empty() {
     <View style={styles.block}>
       <Image source={require('../assets/images/dd.jpg')} style={styles.image} />
       <Text style={styles.description}>이제 나랑 놀자</Text>
-
     </View>
   );
 }
@@ -23,8 +22,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 240,
-    height: 176,
-    marginbottom: 16,
+    height: 240,
+    marginBottom: 16,
     borderRadius: 120,
   },
 });

@@ -10,11 +10,12 @@ import {
   Keyboard,
 } from 'react-native';
 
-function AddTodo() {
+function AddTodo({onInsert}) {
   const [text, setText] = useState('');
 
   // 버튼이 눌렀을 때
   const onPress = () => {
+    onInsert(text);
     // 텍스트비우기
     setText('');
     // 현재 나타만 키보드 닫기
