@@ -11,7 +11,7 @@ function MainTab() {
   return (
     <Tab.Navigator
       // tab 이름 숨기고, 활성화된 tab 색상을 설정
-      tabBarOptions={{showLabel: false, activeTintColor: '#009688'}}>
+      screenOptions={{showLabel: false, inactiveBackgroundColor: '#b8e6f7'}}>
       <Tab.Screen
         name="Feeds"
         component={FeedsScreen}
