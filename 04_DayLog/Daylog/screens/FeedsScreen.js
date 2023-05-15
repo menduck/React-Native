@@ -1,20 +1,9 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
 import LogContext from '../context/LogContext';
-import FloatingWriteButton from '../compontents/FloatingWriteButton';
-import FeedList from '../compontents/FeedList';
 
 function FeedsScreen() {
   const {text, setText} = useContext(LogContext);
-  const {logs} = useContext(LogContext);
-  const [hidden, setHidden] = useState(false);
-
-  const onScrolledToBottom = isBottom => {
-    if (hidden != isBottom) {
-      setHidden(isBottom);
-    }
-  };
-  console.log(JSON.stringify(logs, null, 2));
   return (
     <View style={styles.block}>
       {/* Render Props */}
@@ -26,8 +15,6 @@ function FeedsScreen() {
         placeholder="텍스트를 입력하세요."
         style={styles.input}
       />
-      <FeedList logs={logs} onScrolledToBottom={onScrolledToBottom} />
-      <FloatingWriteButton hidden={hidden} />
     </View>
   );
 }
@@ -40,9 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 
-  block: {
-    flex: 1,
-  },
+  block: {},
   // box: {
   //   borderWidth: 2,
   //   padding: 16,
