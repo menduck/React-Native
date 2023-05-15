@@ -1,13 +1,24 @@
 import React from 'react';
 import {createContext, useState} from 'react';
 
+import {v4 as uuidv4} from 'uuid';
 const LogContext = createContext();
 
-// Provider를 사용하는 컴포넌트에서 Context의 상태를 관리하는 것보다는 Provider 전용 컴포넌트를 따로 만드는 것이 유지보수성이 높음.
 export function LogContextProvider({children}) {
-  const [text, setText] = useState('');
+  const [logs, setLogs] = useState([]);
+
+  const onCreate = ({title, body, date}) => {
+    const log = {
+      id: uuidv4(),
+      title,
+      body,
+      date,
+    };
+    setLogs([log, ...logs]);
+  };
+
   return (
-    <LogContext.Provider value={{text, setText}}>
+    <LogContext.Provider value={{logs, onCreate}}>
       {children}
     </LogContext.Provider>
   );
