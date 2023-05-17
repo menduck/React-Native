@@ -1,35 +1,76 @@
 import React, {useContext, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import WriteHeader from '../compontents/WriteHeader';
-import {StyleSheet} from 'react-native';
+import {Alert, KeyboardAvoidingView, Platform, StyleSheet} from 'react-native';
 import WriteEditor from '../compontents/WriteEditor';
 import {useNavigation} from '@react-navigation/native';
 import LogContext from '../context/LogContext';
 
-function WriteScreen() {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const navigation = useNavigation();
+function WriteScreen({route}) {
+  const log = route.params?.log;
 
-  const {onCreate} = useContext(LogContext);
+  const [title, setTitle] = useState(log?.title ?? '');
+  const [body, setBody] = useState(log?.body ?? '');
+  const navigation = useNavigation();
+  const [date, setDate] = useState(log ? new Date(log.date) : new Date());
+
+  const {onCreate, onModify, onRemove} = useContext(LogContext);
+  const onAskRemove = () => {
+    Alert.alert(
+      '삭제',
+      '정말로 삭제하시겠어요?',
+      [
+        {text: '취소', style: 'cancel'},
+        {
+          text: '삭제',
+          onPress: () => {
+            onRemove(log?.id);
+            navigation.pop();
+          },
+          style: 'destructive',
+        },
+      ],
+      {cancelable: true},
+    );
+  };
   const onSave = () => {
-    onCreate({
-      title,
-      body,
-      date: new Date().toISOString(),
-    });
+    if (log) {
+      onModify({
+        id: log.id,
+        date: date.toISOString(),
+        title,
+        body,
+      });
+    } else {
+      onCreate({
+        title,
+        body,
+        date: date.toISOString(),
+      });
+    }
     // 저장 후 이전 화면 되돌아가기
     navigation.pop();
   };
   return (
     <SafeAreaView style={styles.block}>
-      <WriteHeader onSave={onSave} />
-      <WriteEditor
-        title={title}
-        body={body}
-        onChangeTitle={setTitle}
-        onChangeBody={setBody}
-      />
+      <KeyboardAvoidingView
+        style={styles.avoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <WriteHeader
+          onSave={onSave}
+          onAskRemove={onAskRemove}
+          // log값이 유효하면 true
+          isEditing={!!log}
+          date={date}
+          onChangeDate={setDate}
+        />
+        <WriteEditor
+          title={title}
+          body={body}
+          onChangeTitle={setTitle}
+          onChangeBody={setBody}
+        />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -38,6 +79,9 @@ const styles = StyleSheet.create({
   block: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  avoidingView: {
+    flex: 1,
   },
 });
 

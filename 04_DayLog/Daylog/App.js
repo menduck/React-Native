@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import RootStack from './screens/RootStack';
 // import LogContext from './context/LogContext';
 import {LogContextProvider} from './context/LogContext';
+import {SearchContextProvider} from './context/SearchContext';
 
 function App() {
   return (
@@ -10,9 +11,11 @@ function App() {
       {/* <LogContext.Provider value="뭘까유">
         <RootStack />
       </LogContext.Provider> */}
-      <LogContextProvider>
-        <RootStack />
-      </LogContextProvider>
+      <SearchContextProvider>
+        <LogContextProvider>
+          <RootStack />
+        </LogContextProvider>
+      </SearchContextProvider>
     </NavigationContainer>
   );
 }

@@ -1,66 +1,48 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Animated, Button, StyleSheet, Text, View} from 'react-native';
+import React, {useContext, useMemo, useState} from 'react';
+import {format} from 'date-fns';
+import CalendarView from '../compontents/CalendarView';
 import LogContext from '../context/LogContext';
+import FeedList from '../compontents/FeedList';
 
-function FadeInAndOut() {
-  const animation = useRef(new Animated.Value(1)).current;
-  // 상태 값에 따라 에니메이션 적용
-  const [hidden, setHidden] = useState(false);
-  useEffect(() => {
-    Animated.timing(animation, {
-      toValue: hidden ? 0 : 1,
-      useNativeDriver: true,
-    }).start();
-  }, [hidden, animation]);
-
-  return (
-    <View>
-      <Animated.View style={[styles.rectangle, {opacity: animation}]} />
-      {/* 버튼 두 개로 적용하기 */}
-      {/* <Button
-        title="FadeIn"
-        onPress={() => {
-          Animated.timing(animation, {
-            toValue: 1,
-            useNativeDriver: true,
-          }).start();
-        }}
-      />
-      <Button
-        title="FadeOut"
-        onPress={() => {
-          Animated.timing(animation, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }}
-      /> */}
-      <Button
-        title="Toggle"
-        onPress={() => {
-          setHidden(!hidden);
-        }}
-      />
-    </View>
-  );
-}
 function CalendarScreen() {
-  const {text} = useContext(LogContext);
+  const {logs} = useContext(LogContext);
+  const [selectedDate, setSelectedDate] = useState(
+    format(new Date(), 'yyyy-MM-dd'),
+  );
+  // const markedDates = logs.reduce((acc, current) => {
+  //   const formattedDate = format(new Date(current.date), 'yyyy-MM-dd');
+  //   acc[formattedDate] = {marked: true};
+  //   return acc;
+  // }, {});
+  // 리렌더링될 때마다 markdedDates를 생성하기 때문에 날짜가 바뀌어도 변하지 않는 값이므로 매번 생성할 필요가 없음
+
+  // -> useMemo hook 최적화하기
+  // logs 배열이 바뀔 때만 logs.reduce 함수 실행
+
+  const markedDates = useMemo(
+    () =>
+      logs.reduce((acc, current) => {
+        const formattedDate = format(new Date(current.date), 'yyyy-MM-dd');
+        acc[formattedDate] = {marked: true};
+        return acc;
+      }, {}),
+    [logs],
+  );
+  const filteredLogs = logs.filter(
+    log => format(new Date(log.date), 'yyyy-MM-dd') === selectedDate,
+  );
   return (
-    <View style={styles.block}>
-      {/* <Text style={styles.text}>Text: {text}</Text> */}
-      <FadeInAndOut />
-    </View>
+    <FeedList
+      logs={filteredLogs}
+      ListHeaderComponent={
+        <CalendarView
+          markedDates={markedDates}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  block: {},
-  text: {
-    padding: 16,
-    fontSize: 24,
-  },
-  rectangle: {width: 100, height: 100, backgroundColor: 'black'},
-});
 
 export default CalendarScreen;
