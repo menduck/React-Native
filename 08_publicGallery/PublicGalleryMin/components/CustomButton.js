@@ -1,7 +1,7 @@
 import React from 'react';
 import {Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 
-function CutomButton({onPress, title, hasMarginBottom, theme}) {
+function CustomButton({onPress, title, hasMarginBottom, theme}) {
   const isPrimary = theme === 'primary';
   return (
     <View
@@ -26,7 +26,7 @@ function CutomButton({onPress, title, hasMarginBottom, theme}) {
   );
 }
 
-CutomButton.defaultProps = {
+CustomButton.defaultProps = {
   theme: 'primary',
 };
 
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     borderRadius: 4,
+
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
@@ -60,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CutomButton;
+export default CustomButton;
